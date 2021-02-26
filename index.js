@@ -35,7 +35,7 @@ function prompt(){inquirer.prompt({
     
     type: 'list',
     name: 'menu',
-    message: 'Select your desired function'
+    message: 'Select your desired function: '
     choices: [
         menuList.viewDepartments,
         menuList.viewRoles,
@@ -93,4 +93,16 @@ function viewDepartments() {
         prompt();
     });
 }
- 
+
+function viewRoles() {
+    const query = 'SELECT role.title, emploee.id, employee.first_name, employee.last_name, department.name AS department
+    FROM employee
+    LEFT JOIN role ON (role.id = employee.role_id)
+    LEFT JOIN department ON (department.id = role.department_id)
+    ORDER BY role.title;';
+    db.query(query, (err, res) => {
+        if (err) throw err;
+        console.log(View all roles');
+        prompt();
+    });
+}

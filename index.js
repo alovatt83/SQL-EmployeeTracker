@@ -1,97 +1,195 @@
 const inquirer = require("inquirer");
-const fs = require("fs");
-const util = require("util");
-const render = require("./lib/sqlRenderer");
+const mysql = require('mysql');
+const express = require("express");
+const Connection = require("mysql2/typings/mysql/lib/Connection");
+require('console.table');
 
-const emptyArray = [];
 
-        const menu =  [     
+const menuList =  {     
 
-        {
-            type: "list",
-            name: "menu",
-            message: "What would you like to do?",
+       
+        viewDeparments: "View all departments",
+        viewRoles: "View all roles",
+        viewEmployees: "View all employees",
+        addDep: "Add a department",
+        addRole: "Add a role",
+        addEmployee: "Add an employee",
+        updateEmployee: "Update an employee role",
+        quit: "Quit"
+        };
+
+const db = mysql.createConnection({
+
+    host: "localhost",
+
+    user: "yourusername",
+
+    password: "yourpassword"
+
+  });
+
+    db.connect(function(err) {
+    if (err) throw err;
+    console.log("MySql Connected!");
+  });
+
+function prompt([inquirer.prompt({
+            type: 'list',
+            name: 'menu',
+            message: 'Select your desired function'
             choices: [
-                "View all departments",
-                "View all roles",
-                "View all employees",
-                "Add a department",
-                "Add a role",
-                "Add an employee",
-                "Update an employee role",
-                "Exit"]
-        },
-    ]
-
-        const addDep = [
-
-        {
-            type: "input",
-            name: "addDep",
-            message: "Enter the name of the new department: "
-        },
-    ]
-        
-        const addRole = [
-        
-        {
-            type: "input",
-            name: "roleName",
-            message: "Enter the name of the new role: ",
-        },
-        {
-            type: "input",
-            name: "salary",
-            message: "Enter the salary of the new role: "
-        },
-        {
-            type: "list",
-            name: "addRoleDep",
-            message: "Select Department for new role: ",
-            choices: [
-
+                menuList.viewDepartments,
+                menuList.viewRoles,
+                menuList.viewEmployees,
+                menuList.addDep,
+                menuList.addRole,
+                menuList.addEmployee,
+                menuList.updateEmployee,
+                menuList.quit
             ]
-        },
-    ]
-        
-        const addEmployee = [
+    })
 
-        {
-            type: "input",
-            name: "firstName",
-            message: "Enter new employees first name: "
-        },
-        {
-            type: "input",
-            name: "lastName",
-            message: "Enter new employees last name: "
-        },
-        {
-            type: "input",
-            name: "newEmpRole",
-            message: "Enter mew employees role: "
-        },
-        {
-            type: "list",
-            name: "newEmpManager",
-            message: "Select new employees manager: "
-        },
-    ]   
-        const updateEmployee = [
+    .then(response => {
+            switch (response.nextAction) {
+                case menuList.viewDepartments:
+                    viewDepartments();
+                    break;
+                
+                case menuList.addRole:
+                    viewRoles();
+                    break;
 
-        {
-            type: "list",
-            name: "currentEmp",
-            message: "Which employee would you like to update?: ",
-            choices: []
-        },
-        {
-            type: "input",
-            name: "updateEmpRole",
-            message: "Enter employees new role: "
-        },
+                case menuList.viewEmployees:
+                    viewEmployees();
+                    break;
+
+                case menuList.addDep:
+                    addDep();
+                    break;
+
+                case menuList.addRole:
+                    addRole();
+                    break;
+                case menuList.addEmployee:
+                    addEmployee();
+                    break;
+                case menuList.updateEmployee:
+                    updateEmployee();
+                    break;
+                case 'Quit':
+                    Connection.end();
+                    console.log('Exiting System')
+                    break;
+            }
     
+    ]);
 
+    }
+    
+  const app = express();
+
+  // Create DB
+
+app.get("/createdb", (req, res) => {
+
+    let sql = "CREATE DATABASE nodemysql";
+  
+    db.query(sql, (err) => {
+  
+      if (err) {
+  
+        throw err;
+  
+      }
+  
+      res.send("Database created");
+  
+    });
+  
+  });
+  
+  "CREATE TABLE employee(id int AUTO_INCREMENT, name VARCHAR(255), designation VARCHAR(255), PRIMARY KEY(id))";
+
+  db.query(sql, (err) => {
+
+    if (err) {
+
+      throw err;
+
+    }
+
+    res.send("Employee table created");
+
+  });
+
+
+app.get("/employee1", (req, res) => {
+
+    let post = { name: "Jake Smith", designation: "Chief Executive Officer" };
+  
+    let sql = "INSERT INTO employee SET ?";
+  
+    let query = db.query(sql, post, (err) => {
+  
+      if (err) {
+  
+        throw err;
+  
+      }
+  
+      res.send("Employee 1 added");
+  
+    });
+  
+  });
+
+  // Update employee
+
+app.get("/updateemployee/:id", (req, res) => {
+
+    let newName = "Updated name";
+  
+    let sql = `UPDATE employee SET name = '${newName}' WHERE id = ${req.params.id}`;
+  
+    let query = db.query(sql, (err) => {
+  
+      if (err) {
+  
+        throw err;
+  
+      }
+  
+      res.send("Post updated...");
+  
+    });
+  
+  });
+
+  // Delete employee
+
+app.get("/deleteemployee/:id", (req, res) => {
+
+    let sql = `DELETE FROM employee WHERE id = ${req.params.id}`;
+  
+    let query = db.query(sql, (err) => {
+  
+      if (err) {
+  
+        throw err;
+  
+      }
+  
+      res.send("Employee deleted");
+  
+    });
+  
+  });
+
+  app.listen("3001", () => {
+
+    console.log("API Server Started on Port 3001");
+  
+  });
 
 // Initiate questions.
 function init() {
@@ -99,36 +197,7 @@ function init() {
     // Start inquirer with manager questions.
     menu();
 
-    function next() {
-        inquirer.prompt(menu).then((response) => {
-            
-            console.log(response);
-            switch (response.nextEmployee) {
-                case 'View all departments':
-                    menu();
-                    break;
-                case 'View all roles':
-                    viewRoles();
-                    break;
-                case 'View all employees':
-                    viewEmployees();
-                    break;
-                case 'Add a department':
-                    addDep();
-                    break;
-                case 'Add a role':
-                    addRole();
-                    break;
-                case 'Add an employee':
-                    addEmployee();
-                    break;
-                case 'Update an employee role':
-                    updateEmployee();
-                    break;
-                case 'Exit':
-                    console.log('Exiting System')
-                    exit();
-            }
+
         })
     }
     const viewEmployeesByManager = async () => {
@@ -233,7 +302,4 @@ function init() {
             // Move user to select 'nextEmployee'        
             next();
             })
-        }
-
-    
-    
+        init();

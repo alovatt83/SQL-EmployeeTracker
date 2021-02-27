@@ -10,62 +10,46 @@ const db = mysql.createConnection({
     database: "allemployee"
 });
 
-const menuList =  {    
+inquirer.prompt({
 
-    viewDeparments: "View all departments",
-    viewRoles: "View all roles",
-    viewEmployees: "View all employees",
-    addDep: "Add a department",
-    addRole: "Add a role",
-    addEmployee: "Add an employee",
-    updateEmployee: "Update an employee role",
-    quit: "Quit"
-
-};
-
-
-    db.connect(function(err) {
-    if (err) throw err;
-    console.log("MySql Connected!");
-  });
-
-function open(){inquirer.prompt({
-    
+    name: 'menuQuestions',
     type: 'list',
-    name: 'menu',
-    message: 'Select your desired function: '
+    message: 'Select an option: '
     choices: [
-        menuList.viewDepartments,
-        menuList.viewRoles,
-        menuList.viewEmployees,
-        menuList.addDep,
-        menuList.addRole,
-        menuList.addEmployee,
-        menuList.updateEmployee,
-        menuList.quit]
-    })
+        'View all departments', 
+        'View all roles', 
+        'View all employees', 
+        'Add a department', 
+        'Add a role', 
+        'Add an employee', 
+        'Update an employee role', 
+        'Quit']
 
-.then(response => {
-    switch (response.nextAction) {
-        case menuList.viewDepartments:
+loopQuestions()
+async function loopQuestions() {
+
+const results = await inquirer.prompt(menuQuestions.actions);
+   
+    switch (response.menuQuestions) {
+        case "View all departments":
             viewDepartments();
             break;
-        case menuList.viewRoles:
+        case 'View all roles':
             viewRoles();
             break;
-        case menuList.viewEmployees:
+        case 'View all employees':
             viewEmployees();
             break;
-        case menuList.addDep:
+        case 'Add a department':
             addDep();
             break;
-        case menuList.addRole:
+        case 'Add a role':
             addRole();
             break;
-        case menuList.addEmployee:
+        case 'Add an employee':
             addEmployee();
             break;
-        case menuList.updateEmployee:
+        case 'Update an employee role':
             updateEmployee();
             break;
         case 'Quit':
@@ -75,47 +59,21 @@ function open(){inquirer.prompt({
     
     ]);
 
-    }
+}
 
 function viewDepartments() {
-    const query = '
-    SELECT department.name AS department, role.title, employee.id, employee.first_name, employee.last_name
-    FROM employee
-    LEFT JOIN role ON (role.id = employee.role_id)
-    LEFT JOIN department ON (department.id = role.department_id)
-    ORDER BY department;';
-    db.query(query, (err, res) => {
+
+    connection.query("SELECT name AS Departments FROM department ", function (err, results) {
+        console.table(results);
         if (err) throw err;
-        console.log('View All Departments');
-        console.table(res);
-        open();
+        determineAction()
     });
 }
 
 function viewRoles() {
-    const query = 'SELECT role.title, emploee.id, employee.first_name, employee.last_name, department.name AS department
-    FROM employee
-    LEFT JOIN role ON (role.id = employee.role_id)
-    LEFT JOIN department ON (department.id = role.department_id)
-    ORDER BY role.title;';
-    db.query(query, (err, res) => {
+    connection.query("SELECT title AS Roles FROM role ", function (err, results) {
+        console.table(results);
         if (err) throw err;
-        console.log(View all roles');
-        open();
+        determineAction()
     });
 }
-
-function viewEmployees() {
-    const query = 'SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.firstname, ' ', manager.last_name) AS manager
-    FROM employee
-    LEFT JOIN employee manager ON manager.id = employee.manager_id
-    INNER JOIN role ON (role.id = employee.role_id)
-    INNER JOIN department ON (department.id = role.department_id)
-    ORDER BY employee.id;';
-    console.log('View employees: ');
-    open();
-});
-
-}
-
-function 

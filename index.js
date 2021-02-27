@@ -1,8 +1,14 @@
-const { query } = require("express");
 const inquirer = require("inquirer");
 const mysql = require('mysql');
-require('console.table');
+const tables = require('console.table');
 
+const db = mysql.createConnection({
+    host: "localhost",
+    port: 3001,
+    user: "root",
+    password: "Greedy10",
+    database: "allemployee"
+});
 
 const menuList =  {    
 
@@ -17,22 +23,13 @@ const menuList =  {
 
 };
 
-const db = mysql.createConnection({
-
-    host: "localhost",
-
-    user: "yourusername",
-
-    password: "yourpassword"
-
-  });
 
     db.connect(function(err) {
     if (err) throw err;
     console.log("MySql Connected!");
   });
 
-function prompt(){inquirer.prompt({
+function open(){inquirer.prompt({
     
     type: 'list',
     name: 'menu',
@@ -53,7 +50,7 @@ function prompt(){inquirer.prompt({
         case menuList.viewDepartments:
             viewDepartments();
             break;
-        case menuList.addRole:
+        case menuList.viewRoles:
             viewRoles();
             break;
         case menuList.viewEmployees:
@@ -79,8 +76,10 @@ function prompt(){inquirer.prompt({
     ]);
 
     }
+
 function viewDepartments() {
-    const query = 'SELECT department.name AS department, role.title, employee.id, employee.first_name, employee.last_name
+    const query = '
+    SELECT department.name AS department, role.title, employee.id, employee.first_name, employee.last_name
     FROM employee
     LEFT JOIN role ON (role.id = employee.role_id)
     LEFT JOIN department ON (department.id = role.department_id)
@@ -89,7 +88,7 @@ function viewDepartments() {
         if (err) throw err;
         console.log('View All Departments');
         console.table(res);
-        prompt();
+        open();
     });
 }
 
@@ -102,7 +101,7 @@ function viewRoles() {
     db.query(query, (err, res) => {
         if (err) throw err;
         console.log(View all roles');
-        prompt();
+        open();
     });
 }
 
@@ -114,7 +113,9 @@ function viewEmployees() {
     INNER JOIN department ON (department.id = role.department_id)
     ORDER BY employee.id;';
     console.log('View employees: ');
-    prompt();
+    open();
 });
 
 }
+
+function 

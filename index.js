@@ -80,3 +80,16 @@ const query =
     loopQuestions();
     });
   }
+// View All Roles SQL Query 
+function viewRoles() {
+    const query = 
+    
+        "SELECT * FROM role";
+    
+        db.query(query, function (err, res) {
+          if (err) throw err;
+          console.table(res);
+       
+        loopQuestions();
+        });
+      }

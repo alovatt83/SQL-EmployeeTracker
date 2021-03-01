@@ -18,11 +18,10 @@ View, add or Update Employee roles. View, add departments. View managers and sal
 - [Contact](#contact)
 
 ## Installation
-> execute in terminal: npm install
-> execute in terminal: npm install inquirer
-> execute in terminal: npm install mysql
-
-> execute in terminal: node index.js
+> execute in terminal: npm install<br />
+> execute in terminal: npm install inquirer<br />
+> execute in terminal: npm install mysql<br />
+> execute in terminal: node index.js<br />
 
 ## Usage
 Keep track of all of your employees!

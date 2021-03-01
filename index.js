@@ -93,3 +93,19 @@ function viewRoles() {
         loopQuestions();
         });
       }
+      // View All Employees SQL Query 
+function viewEmployees() {
+const query = 
+        
+        "SELECT employee_id, employee.first_name, employee.last_name, role.role_title, " +
+        "department.name FROM employee " +
+        "LEFT JOIN role on employee.role_id = role.role_id " +
+        "LEFT JOIN department on role.department_id = department.department_id";
+    
+        db.query(query, function (err, res) {
+          if (err) throw err;
+          console.table(res);
+          console.log("");
+          loopQuestions();
+        });
+      }

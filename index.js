@@ -245,7 +245,7 @@ function addEmployee() {
                   [answer.first_name, answer.last_name, answer1.role, answer2.manager], function (err, res) {
   
                   if (err) throw err;
-                  
+
                   if (res.affectedRows > 0) {
                       console.log(res.affectedRows + " record added!");
                   }
@@ -260,5 +260,64 @@ function addEmployee() {
     });
   }
   
+// Update Employee Role SQL Query 
+function updateEmployeeRole() {
+const query = 
+  
+"SELECT employee.employee_id as value, " +
+"CONCAT(employee.first_name, ' ', employee.last_name) as name FROM employee WHERE manager_id IS NOT NULL";
+
+    db.query(query, function (err, res) {
+    if (err) throw err;
+    let array = JSON.parse(JSON.stringify(res));
+
+    inquirer.prompt({
+
+        name: "employee",
+        type: "list",
+        message: "Which employees role do you wish to change?",
+        choices: array
+
+        }).then(function (answer1) {
+        const query = 
+        
+"SELECT role_id as value, role_title as name FROM role WHERE manager = 0";
+
+        db.query(query, function (err, res) {
+          if (err) throw err;
+          let array2 = JSON.parse(JSON.stringify(res));
+          inquirer.prompt({
+
+            name: "role",
+            type: "list",
+            message: "Enter the new role?",
+            choices: array2
+
+        }).then(function (answer2) {
+         db.query("UPDATE employee SET role_id = ? WHERE employee_id = ?",
+                [answer2.role, answer1.employee], function (err, res) {
+
+                if (err) {
+
+                if (err) {
+
+                } else {
+                    console.log("Error");
+
+                }
+                return loopQuestions();
+                }
+                if (res.affectedRows > 0) {
+                console.log(res.affectedRows + " record updated successfully!");
+
+                }
+                console.log("");
+                loopQuestions();
+                });
+            });
+        });
+      });
+  });
+}
 
   

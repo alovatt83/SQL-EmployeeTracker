@@ -37,6 +37,7 @@ inquirer.prompt({
           "Exit"]
 
       })
+
 // Initiate Switch Loop
 .then(function (answer) {
     switch (answer.action) {
@@ -67,6 +68,7 @@ inquirer.prompt({
     }
     });
 }
+
 // View All Departments SQL Query 
 function viewDep() {
 const query = 
@@ -80,6 +82,7 @@ const query =
     loopQuestions();
     });
   }
+
 // View All Roles SQL Query 
 function viewRoles() {
     const query = 
@@ -93,7 +96,7 @@ function viewRoles() {
         loopQuestions();
         });
       }
-      // View All Employees SQL Query 
+// View All Employees SQL Query 
 function viewEmployees() {
 const query = 
         
@@ -109,3 +112,26 @@ const query =
           loopQuestions();
         });
       }
+      
+// Add Department SQL Query 
+function addDep() {
+    inquirer.prompt({
+  
+      name: "department",
+      type: "input",
+      message: "Enter New Department Name: "
+    })
+  
+  .then(function (answer) {
+      db.query("INSERT INTO department SET ?", { name: answer.department }, function (err) {
+      if (err) throw err;
+      console.log(`${answer.department} department updated! \n`);
+      loopQuestions();
+  
+      });
+  });
+  }
+
+
+
+  

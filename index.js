@@ -191,5 +191,74 @@ function addRole() {
       });
     }
     
+    // Add Employee SQL Query 
+function addEmployee() {
+    inquirer.prompt([
+      {
+  
+        type: "input",
+        name: "first_name",
+        message: "Enter employees first name: "
+  
+      },
+      {
+  
+        type: "input",
+        name: "last_name",
+        message: "Enter employees last name: "
+  
+      }
+    ]).then(function (answer) {
+  const query = "SELECT role_id as value, role_title as name FROM role WHERE manager = 0";
+  db.query(query, function (err, res) {
+
+      if (err) throw err;
+
+      let array = JSON.parse(JSON.stringify(res));
+      inquirer.prompt(
+  
+          {
+          name: "role",
+          type: "list",
+          message: "Which role applies to this new employee",
+          choices: array
+  
+          }).then(function (answer1) {
+          var query = 
+              
+          "SELECT employee.employee_id as value, CONCAT(employee.first_name, ' ', employee.last_name) as name " +
+          "FROM employee INNER JOIN role ON employee.role_id = role.role_id WHERE role.manager = 1";
+  
+          db.query(query, function (err, res) {
+              if (err) throw err;
+
+              let array2 = JSON.parse(JSON.stringify(res));
+              inquirer.prompt({
+  
+              name: "manager",
+              type: "list",
+              message: "Select a manager for the new employee",
+              choices: array2
+  
+              }).then(function (answer2) {
+                  db.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ( ?, ?, ?, ?)",
+                  [answer.first_name, answer.last_name, answer1.role, answer2.manager], function (err, res) {
+  
+                  if (err) throw err;
+                  
+                  if (res.affectedRows > 0) {
+                      console.log(res.affectedRows + " record added!");
+                  }
+  
+                      console.log("");
+                      loopQuestions();
+                      });
+                  });
+              });
+            });
+      });
+    });
+  }
+  
 
   

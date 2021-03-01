@@ -3,18 +3,20 @@
     "console.table": "^0.10.0",
     "express": "^4.17.1",
     "inquirer": "^7.3.3",
+    "mssql": "^6.3.1",
+    "mysql": "^2.18.1",
     "mysql2": "^2.2.5",
     "node": "^15.8.0",
     "sqlite3": "^5.0.2"
   },
-  "scripts": {
-    "test": "jest"
-  },
-  "name": "--y",
-  "description": "",
+  "name": "SQL-EmployeeTracker",
   "version": "1.0.0",
-  "main": "server.js",
-  "repository": {
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+    "repository": {
     "type": "git",
     "url": "git+https://github.com/alovatt83/SQL-EmployeeTracker.git"
   },

@@ -1,79 +1,82 @@
-const inquirer = require("inquirer");
+//Depedencies
 const mysql = require('mysql');
-const tables = require('console.table');
-
+const inquirer = require('inquirer');
+//MYSQL Connection
 const db = mysql.createConnection({
     host: "localhost",
-    port: 3001,
+    port: 3306,
     user: "root",
     password: "Greedy10",
-    database: "allemployee"
-});
+    database: "employeedatabase"
+  });
 
+//Connections Error / Success Logging  
+db.connect(function(err) {
+    if (err) { console.error("ERROR connecting");
+      return;
+    }
+    console.log("connected");
+    loopQuestions();
+  });
+//Main Menu List Options
+function loopQuestions() {
 inquirer.prompt({
 
-    name: 'menuQuestions',
-    type: 'list',
-    message: 'Select an option: '
-    choices: [
-        'View all departments', 
-        'View all roles', 
-        'View all employees', 
-        'Add a department', 
-        'Add a role', 
-        'Add an employee', 
-        'Update an employee role', 
-        'Quit']
+        name: "action",
+        type: "list",
+        message: "Select an option: ",
+        choices: [
 
-loopQuestions()
-async function loopQuestions() {
+          "View Departments",
+          "View Roles",
+          "View All Employees",
+          "Add Department",
+          "Add Role",
+          "Add Employee",
+          "Update Employee Role",
+          "Exit"]
 
-const results = await inquirer.prompt(menuQuestions.actions);
-   
-    switch (response.menuQuestions) {
-        case "View all departments":
-            viewDepartments();
-            break;
-        case 'View all roles':
-            viewRoles();
-            break;
-        case 'View all employees':
-            viewEmployees();
-            break;
-        case 'Add a department':
-            addDep();
-            break;
-        case 'Add a role':
-            addRole();
-            break;
-        case 'Add an employee':
-            addEmployee();
-            break;
-        case 'Update an employee role':
-            updateEmployee();
-            break;
-        case 'Quit':
-            connection.end();
-            break;
-            }
+      })
+// Initiate Switch Loop
+.then(function (answer) {
+    switch (answer.action) {
+        case "View Departments":
+        viewDep();
+        break;
+        case "View Roles":
+        viewRoles();
+        break;
+        case "View All Employees":
+        viewEmployees();
+        break;
+        case "Add Department":
+        addDep();
+        break;
+        case "Add Role":
+        addRole();
+        break;
+        case "Add Employee":
+        addEmployee();
+        break;
+        case "Update Employee Role":
+        updateEmployeeRole();
+        break;
+        case "Exit":
+        db.end();
+        break;
+    }
+    });
+}
+// View All Departments SQL Query 
+function viewDep() {
+const query = 
     
-    ]);
+    "SELECT * FROM department";
 
-}
-
-function viewDepartments() {
-
-    connection.query("SELECT name AS Departments FROM department ", function (err, results) {
-        console.table(results);
-        if (err) throw err;
-        determineAction()
+    db.query(query, function (err, res) {
+      if (err) throw err;
+      console.table(res);
+   
+    loopQuestions();
     });
-}
-
-function viewRoles() {
-    connection.query("SELECT title AS Roles FROM role ", function (err, results) {
-        console.table(results);
-        if (err) throw err;
-        determineAction()
-    });
-}
+  }

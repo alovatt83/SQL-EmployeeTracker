@@ -132,6 +132,64 @@ function addDep() {
   });
   }
 
-
+//Add Role SQL Query 
+function addRole() {
+    let array = [];
+    const query = 
+      
+      "SELECT department_id as value, name as name FROM department";
+    
+      db.query(query, function (err, res) {
+        if (err) throw err;
+        array = JSON.parse(JSON.stringify(res));
+        const questions = [
+          {
+    
+            type: "input",
+            name: "name",
+            message: "Enter the name of the new role: "
+    
+          },
+          {
+    
+            type: "input",
+            name: "salary",
+            message: "Enter the salary for this new role: ",
+    
+          },
+          {
+    
+            type: "list",
+            name: "department",
+            message: "Select the department of the new role: ",
+            choices: array
+    
+          },
+          {
+    
+            type: "confirm",
+            name: "manager",
+            message: "Does a manager apply to this role? ",
+            default: false
+    
+          }];
+    
+        inquirer.prompt(questions).then(answer => {
+            db.query("INSERT INTO role (role_title, role_salary, department_id, manager) VALUES (?, ?, ?, ?)",
+            [answer.name, answer.salary, answer.department, answer.manager], function (err, res)
+            
+            {
+              if (err) throw err;
+              if (res.affectedRows > 0) {
+                console.log(res.affectedRows + " record added!");
+              }
+              console.log("");
+              loopQuestions();
+    
+            });
+        });
+      });
+    }
+    
 
   
